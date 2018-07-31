@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>cn.deemons.plugin.Globalization</id>
+    <name>Globalization</name>
+    <version>0.0.1</version>
+    <vendor email="deemonsch@gmail.com" url="https://deemons.cn">Deemons</vendor>
+
+    <description><![CDATA[
+          <h1>Globalization</h1>
+      <br/>
+      <p>
+    ]]></description>
+
+    <idea-version since-build="165"/>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="n.deemons.plugin.Globalization" class="cn.deemons.plugin.action.Globalization" text="Globalization"
+                description="Excel string.ml conversion to each other">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
