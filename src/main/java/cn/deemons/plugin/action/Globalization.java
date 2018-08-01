@@ -44,12 +44,12 @@ public class Globalization extends AnAction {
 
             File srcFile = new File(path);
 
-            if (toTable) utils.parseTableToXml(srcFile, s -> {
+            if (toTable) utils.parseXmlToTable(srcFile, s -> {
                 SwingUtilities.invokeLater(() -> processDialog.addString(s));
                 return null;
             });
 
-            if (toXml) utils.parseXmlToTable(srcFile, s -> {
+            if (toXml) utils.parseTableToXml(srcFile, s -> {
                 SwingUtilities.invokeLater(() -> processDialog.addString(s));
                 return null;
             });

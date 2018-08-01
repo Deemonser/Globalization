@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'cn.deemons.plugin'
-version '1.0'
+version '0.1'
 
 apply plugin: 'kotlin'
 
@@ -39,10 +39,22 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 intellij {
-    version '2018.1.6'
+    version '2018.8.1'
+    pluginName 'Globalization'
+    intellij.updateSinceUntilBuild false //Disables updating since-build attribute in plugin.xml
 }
 patchPluginXml {
     changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+     <ul>
+        <li>v0.1 init</li>
+      </ul>
+   """
+}
+
+apply plugin: 'org.jetbrains.intellij'
+
+
+publishPlugin {
+    username 'Deemons'
+    password ''
 }
