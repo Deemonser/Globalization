@@ -13,6 +13,8 @@ public class OptionsDialog extends JDialog {
     private JCheckBox parserExcelToStringsCheckBox;
     private JRadioButton replaceRadioButton;
     private JRadioButton deleteRadioButton;
+    private JCheckBox uploadCheckBox;
+    private JCheckBox downloadToUpdateCheckBox;
     private OptionsListener listener;
 
     public OptionsDialog() {
@@ -71,6 +73,8 @@ public class OptionsDialog extends JDialog {
         dispose();
         if (listener != null) {
             listener.onCheck(parserStringsXmlToCheckBox.isSelected(),
+                    uploadCheckBox.isSelected(),
+                    downloadToUpdateCheckBox.isSelected(),
                     parserExcelToStringsCheckBox.isSelected(),
                     replaceRadioButton.isSelected(), deleteRadioButton.isSelected());
         }
@@ -93,7 +97,7 @@ public class OptionsDialog extends JDialog {
     }
 
     public interface OptionsListener {
-        void onCheck(boolean toTable, boolean toXml, boolean replace, boolean delete);
+        void onCheck(boolean toTable, boolean upload, boolean download, boolean toXml, boolean replace, boolean delete);
     }
 
 

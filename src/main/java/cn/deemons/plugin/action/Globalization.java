@@ -29,7 +29,7 @@ public class Globalization extends AnAction {
     }
 
 
-    private void start(boolean toTable, boolean toXml, boolean replace, boolean delete) {
+    private void start(boolean toTable, boolean upload, boolean download, boolean toXml, boolean replace, boolean delete) {
         processDialog = new ProcessDialog();
         processDialog.setSize(600, 300);
         processDialog.setLocationRelativeTo(null);
@@ -37,7 +37,7 @@ public class Globalization extends AnAction {
         String path = Globalization.this.file.getPath();
         processDialog.addString("\n\n");
         processDialog.addString("FilePath: " + path);
-        processDialog.addString("ToTable: " + toTable + " ,ToXml:" + toXml + " ,Replace:" + replace + " ,Delete:" + delete);
+        processDialog.addString("ToTable: " + toTable + " ,upload:" + upload + " ,download:" + download + " ,ToXml:" + toXml + " ,Replace:" + replace + " ,Delete:" + delete);
 
         new Thread(() -> {
             ParserUtils utils = ParserUtils.INSTANCE;
@@ -45,6 +45,16 @@ public class Globalization extends AnAction {
             File srcFile = new File(path);
 
             if (toTable) utils.parseXmlToTable(srcFile, s -> {
+                SwingUtilities.invokeLater(() -> processDialog.addString(s));
+                return null;
+            });
+
+            if (upload) utils.parseTableToJson(srcFile, s -> {
+                SwingUtilities.invokeLater(() -> processDialog.addString(s));
+                return null;
+            });
+
+            if (download) utils.getNetData(srcFile, s -> {
                 SwingUtilities.invokeLater(() -> processDialog.addString(s));
                 return null;
             });
