@@ -7,6 +7,8 @@ data class RequesJsonBean(
 )
 
 data class X(
+        val key: String,
         val zhCN: String,
-        val enUS: String
+        val enUS: String,
+        val zhTW: String
 )

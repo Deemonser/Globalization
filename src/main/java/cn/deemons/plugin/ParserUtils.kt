@@ -202,16 +202,20 @@ object ParserUtils {
 
         workbook.sheets.forEach {
             for (i in 1 until it.rows) {
+                val key = it.getCell(0, i).contents
                 val cn = it.getCell(1, i).contents
 
                 var us = ""
+                var tw = ""
                 try {
                     us = it.getCell(2, i).contents
+                    tw = it.getCell(3, i).contents
                 } catch (e: ArrayIndexOutOfBoundsException) {
                     e.printStackTrace()
                 }
+
                 System.out.println("i=$i ,cn=$cn , us=$us")
-                list.add(X(cn, us))
+                list.add(X(key, cn, us, tw))
             }
         }
 
@@ -237,7 +241,7 @@ object ParserUtils {
         val copyWorkbook = createWorkbook(copyFile)
 
         var languageList = mutableListOf<LanguageBean_X>()
-        languageBean.data.list.forEach { if (it.projects.contains("app-android")) languageList.add(it) }
+        languageBean.data.list.forEach { if (containAndroidKey(it)) languageList.add(it) }
 
 
         var count = 0
@@ -254,38 +258,26 @@ object ParserUtils {
             val columns = sheet.columns
 
             for (i in 1 until sheet.rows) {
-                val id = sheet.getCell(0, i).contents
+                val key = sheet.getCell(0, i).contents
                 val cn = sheet.getCell(1, i).contents
                 var us = if (columns > 2) sheet.getCell(2, i).contents else ""
-                var tw = ""
+                var tw = if (columns > 3) sheet.getCell(3, i).contents else ""
                 var type = "原文"
 
-                val first = languageList.firstOrNull { it.zhCN == cn }
-                if (first != null) {
-                    val srcExist = us.isNotEmpty()
-                    val transferExist = first.enUS.isNotEmpty()
-                    val remarkExist = first.enUS.isNotEmpty()
-
-                    us = when {
-                        (transferExist && !srcExist) ||
-                                (transferExist && srcExist && !remarkExist) ||
-                                (transferExist && srcExist && remarkExist && !first.remark.split("-----------").contains(us)) -> {
-                            type = "替换"
-                            first.enUS
-                        }
-                        else -> us
-                    }
-
+                val first = languageList.firstOrNull { it.tempKey != null && it.tempKey!!.contains(key) && it.zhCN == cn }
+                if (first != null && (us != first.enUS || tw != first.zhTW)) {
+                    type = "替换"
+                    us = first.enUS
                     tw = first.zhTW
                 }
 
-                copySheet.addCell(Label(0, i, id))
+                copySheet.addCell(Label(0, i, key))
                 copySheet.addCell(Label(1, i, cn))
                 copySheet.addCell(Label(2, i, us))
                 copySheet.addCell(Label(3, i, tw))
                 count++
-                System.out.println("type=$type ,count=$count ,i=$i ,cn=$cn , us=$us ,tw=$tw")
-                onListener("type=$type ,count=$count ,i=$i ,cn=$cn , us=$us ,tw=$tw")
+                System.out.println("type=$type ,count=$count ,i=$i ,key=$key ,cn=$cn ,us=$us ,tw=$tw")
+                onListener("type=$type ,count=$count ,i=$i ,key=$key ,cn=$cn , us=$us ,tw=$tw")
 
             }
         }
@@ -296,6 +288,16 @@ object ParserUtils {
         excelFile.delete()
         copyFile.renameTo(excelFile)
 
+    }
+
+    private fun containAndroidKey(bean_X: LanguageBean_X): Boolean {
+        bean_X.owners.forEach {
+            if (it.project == "app-android") {
+                if (bean_X.tempKey == null) bean_X.tempKey = mutableListOf()
+                bean_X.tempKey?.add(it.key)
+            }
+        }
+        return bean_X.tempKey != null
     }
 
 
@@ -310,6 +312,8 @@ object ParserUtils {
 
 
         val requestJson = Gson().toJson(requesJsonBean)
+
+//        System.out.println(requestJson)
 
         onListener(requestJson)
 
@@ -363,13 +367,13 @@ fun main(args: Array<String>) {
     val excelFile = File("/Users/deemons/Desktop/translation.xls")
 
     //xml 转成 Excel
-    ParserUtils.parseXmlToTable(file, {})
+//    ParserUtils.parseXmlToTable(file, {})
 
     // Excel 转 JSon 并上传
-//    ParserUtils.parseTableToJson(file,{})
+//    ParserUtils.parseTableToJson(file, {})
 
     // 获取云端数据，转换并替换原来的 Excel
-    ParserUtils.getNetData(file,{})
+    ParserUtils.getNetData(file, {})
 
     // 将 Excel 转成 xml
 //    ParserUtils.parseTableToXml(file, {})

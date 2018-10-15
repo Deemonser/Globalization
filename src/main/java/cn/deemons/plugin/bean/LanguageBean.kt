@@ -14,15 +14,21 @@ data class Data(
 )
 
 data class LanguageBean_X(
-        val projects: List<String>,
         val zhTW: String,
         val enUS: String,
         val title: String,
-        val remark: String,
         val _id: String,
-        val id: String,
         val zhCN: String,
+        val owners: List<Owner>,
         val updateTime: String,
         val createTime: String,
         val __v: Int
+) {
+    var tempKey: MutableList<String> ? = null
+}
+
+data class Owner(
+        val _id: String,
+        val project: String,
+        val key: String
 )
