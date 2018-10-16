@@ -318,7 +318,7 @@ object ParserUtils {
         onListener(requestJson)
 
         val request = Request.Builder()
-                .addHeader("cookie", "token=XKir3m1mkzxaUHflEwaf")
+                .addHeader("cookie", "token=ZcCHObPMlCrTEUz0")
                 .url(url)
                 .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), requestJson))
                 .build()
@@ -342,7 +342,7 @@ object ParserUtils {
         val okHttpClient = OkHttpClient()
 
         val request = Request.Builder()
-                .addHeader("cookie", "token=XKir3m1mkzxaUHflEwaf")
+                .addHeader("cookie", "token=ZcCHObPMlCrTEUz0")
                 .url(url)
                 .build()
 
@@ -373,12 +373,12 @@ fun main(args: Array<String>) {
 //    ParserUtils.parseTableToJson(file, {})
 
     // 获取云端数据，转换并替换原来的 Excel
-    ParserUtils.getNetData(file, {})
+//    ParserUtils.getNetData(file, {})
 
     // 将 Excel 转成 xml
 //    ParserUtils.parseTableToXml(file, {})
 
-//    deleteFiles(file)
+//    ParserUtils.deleteFiles(file,{})
 //    ParserUtils.replaceFiles(file) {}
 }
 
