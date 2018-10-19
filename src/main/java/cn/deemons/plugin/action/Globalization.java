@@ -29,7 +29,7 @@ public class Globalization extends AnAction {
     }
 
 
-    private void start(boolean toTable, boolean upload, boolean download, boolean toXml, boolean replace, boolean delete) {
+    private void start(boolean toTable, boolean upload, boolean isInitPush, boolean download, boolean toXml, boolean replace, boolean delete) {
         processDialog = new ProcessDialog();
         processDialog.setSize(600, 300);
         processDialog.setLocationRelativeTo(null);
@@ -49,7 +49,7 @@ public class Globalization extends AnAction {
                 return null;
             });
 
-            if (upload) utils.parseTableToJson(srcFile, s -> {
+            if (upload) utils.parseTableToJson(srcFile, isInitPush, s -> {
                 SwingUtilities.invokeLater(() -> processDialog.addString(s));
                 return null;
             });

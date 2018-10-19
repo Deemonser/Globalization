@@ -110,6 +110,14 @@
               <text value="Download to update"/>
             </properties>
           </component>
+          <component id="835b" class="javax.swing.JCheckBox" binding="isInitPushCheckBox" default-binding="true">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="isInitPush"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>

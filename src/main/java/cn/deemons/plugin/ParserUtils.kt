@@ -188,7 +188,7 @@ object ParserUtils {
         return file
     }
 
-    fun parseTableToJson(projectFile: File, onListener: (string: String) -> Unit) {
+    fun parseTableToJson(projectFile: File, isInitPush: Boolean = false, onListener: (string: String) -> Unit) {
 
         onListener("=========== parseTable -->  Json ============")
 
@@ -207,11 +207,14 @@ object ParserUtils {
 
                 var us = ""
                 var tw = ""
-                try {
-                    us = it.getCell(2, i).contents
-                    tw = it.getCell(3, i).contents
-                } catch (e: ArrayIndexOutOfBoundsException) {
-                    e.printStackTrace()
+
+                if (isInitPush) {
+                    try {
+                        us = it.getCell(2, i).contents
+                        tw = it.getCell(3, i).contents
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        e.printStackTrace()
+                    }
                 }
 
                 System.out.println("i=$i ,cn=$cn , us=$us")
@@ -373,13 +376,13 @@ fun main(args: Array<String>) {
 //    ParserUtils.parseTableToJson(file, {})
 
     // 获取云端数据，转换并替换原来的 Excel
-//    ParserUtils.getNetData(file, {})
+    ParserUtils.getNetData(file, {})
 
     // 将 Excel 转成 xml
-//    ParserUtils.parseTableToXml(file, {})
+    ParserUtils.parseTableToXml(file, {})
 
 //    ParserUtils.deleteFiles(file,{})
-//    ParserUtils.replaceFiles(file) {}
+    ParserUtils.replaceFiles(file) {}
 }
 
 
