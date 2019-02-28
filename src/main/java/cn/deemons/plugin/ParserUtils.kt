@@ -17,9 +17,13 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.dom4j.Document
 import org.dom4j.DocumentHelper
+import org.dom4j.io.OutputFormat
 import org.dom4j.io.SAXReader
+import org.dom4j.io.XMLWriter
 import java.io.File
 import java.io.FileWriter
+import java.lang.IllegalArgumentException
+import javax.sql.rowset.spi.XmlWriter
 
 object ParserUtils {
 
@@ -76,9 +80,11 @@ object ParserUtils {
 
             val filePath = File(projectFile.absolutePath + File.separator + it.name + "/src/main/res").absolutePath
             for (index in 1 until it.columns) {
-
-
-                val parenFile = File(filePath + File.separator + it.getCell(index, 0).contents)
+                val typeName = it.getCell(index, 0).contents
+                if (typeName.isNullOrBlank()) {
+                    continue
+                }
+                val parenFile = File(filePath + File.separator + typeName)
                 if (!parenFile.exists()) parenFile.createNewFile()
                 val file = File(parenFile.absolutePath + File.separator + fileName)
                 onListener(file.absolutePath)
@@ -93,9 +99,10 @@ object ParserUtils {
         val root = DocumentHelper.createDocument().addElement("resources")
         keys.forEachIndexed { index, it ->
             if (index > 0 && values.size > index) {
+                val contents = values[index].contents
                 root.addElement("string")
                         .addAttribute("name", it.contents)
-                        .addText(values[index].contents)
+                        .addText(contents.replace("'", "\\'").replace("\\\\","\\"))
             }
         }
 
@@ -104,7 +111,11 @@ object ParserUtils {
         }
         file.createNewFile()
         val writer = FileWriter(file)
-        root.write(writer)
+
+        val format = OutputFormat.createPrettyPrint()
+        val xmlWriter = XMLWriter(writer, format)
+        xmlWriter.write(root)
+        xmlWriter.close()
         writer.close()
     }
 
@@ -135,7 +146,10 @@ object ParserUtils {
             onListener(file.absolutePath)
             val document = SAXReader().read(file)
 
-            val moduleName = file.parentFile.parentFile.parentFile.parentFile.parentFile.name
+            val resFile = file.parentFile.parentFile
+            if (resFile.name != "res") throw IllegalArgumentException("file path is error!  ===> path: " + file.absolutePath)
+
+            val moduleName = resFile.parentFile.parentFile.parentFile.name
             var writableSheet = workbook.getSheet(moduleName)
             if (writableSheet == null) {
                 writableSheet = workbook.createSheet(moduleName, tableIndex++)
@@ -169,9 +183,9 @@ object ParserUtils {
         document.rootElement.elements().forEachIndexed { _, it ->
             val cell = sheet.findCell(it.attribute("name").value)
             if (cell == null) {
-                sheet.addCell(Label(column, sheet.rows, it.stringValue))
+                sheet.addCell(Label(column, sheet.rows, it.stringValue.replace("\\'", "'")))
             } else {
-                sheet.addCell(Label(column, cell.row, it.stringValue))
+                sheet.addCell(Label(column, cell.row, it.stringValue.replace("\\'", "'")))
             }
         }
     }
@@ -369,20 +383,32 @@ fun main(args: Array<String>) {
     val file = File("/Users/deemons/Desktop/AndroidProject/FollowmeAndroidWithComponent")
     val excelFile = File("/Users/deemons/Desktop/translation.xls")
 
-    //xml 转成 Excel
-//    ParserUtils.parseXmlToTable(file, {})
+//    upload(file)
+    download(file)
 
-    // Excel 转 JSon 并上传
-//    ParserUtils.parseTableToJson(file, {})
 
-    // 获取云端数据，转换并替换原来的 Excel
+//    val s = "I'm find.\\'aaaa"
+//    System.out.println(s + " ==>>" + s.replace("\\'", "'"))
+}
+
+private fun download(file: File) {
+    //    // 获取云端数据，转换并替换原来的 Excel
     ParserUtils.getNetData(file, {})
-
-    // 将 Excel 转成 xml
+//
+//    // 将 Excel 转成 xml
     ParserUtils.parseTableToXml(file, {})
-
-//    ParserUtils.deleteFiles(file,{})
+//
+////    ParserUtils.deleteFiles(file,{})
     ParserUtils.replaceFiles(file) {}
+}
+
+private fun upload(file: File) {
+    //xml 转成 Excel
+    ParserUtils.parseXmlToTable(file, {})
+//
+//    // Excel 转 Json 并上传
+    ParserUtils.parseTableToJson(file, false, {})
+//
 }
 
 
